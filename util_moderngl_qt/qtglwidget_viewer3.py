@@ -3,7 +3,7 @@ import moderngl
 import pyrr
 import numpy
 from PyQt5 import QtOpenGL, QtGui, QtCore
-import pydelfem3.view_navigation3
+import util_moderngl_qt.view_navigation3
 
 class QtGLWidget_Viewer3(QtOpenGL.QGLWidget):
 
@@ -15,7 +15,7 @@ class QtGLWidget_Viewer3(QtOpenGL.QGLWidget):
         fmt.setSampleBuffers(True)
         super(QtGLWidget_Viewer3, self).__init__(fmt, None)
         #
-        self.nav = pydelfem3.view_navigation3.ViewNavigation3()
+        self.nav = util_moderngl_qt.view_navigation3.ViewNavigation3()
         self.resize(640, 480)
         self.setWindowTitle('Mesh Viewer')
         self.list_drawer = list_drawer
