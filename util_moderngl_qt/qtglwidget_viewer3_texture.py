@@ -1,47 +1,50 @@
 import math
-import moderngl
 import pyrr
+import moderngl
 import numpy
-from PyQt5 import QtOpenGL, QtGui, QtCore
-import util_moderngl_qt.view_navigation3
+from PyQt5 import QtOpenGL, QtWidgets, QtCore, QtGui
 
-class QtGLWidget_Viewer3(QtOpenGL.QGLWidget):
+import util_moderngl_qt.qtglwidget_viewer3
 
-    def __init__(self, list_drawer=[], parent=None):
+class QtGLWidget_Viewer3_Texture(QtOpenGL.QGLWidget):
+
+    def __init__(self, drawer, img: numpy.ndarray, parent=None):
         self.parent = parent
         fmt = QtOpenGL.QGLFormat()
         fmt.setVersion(3, 3)
         fmt.setProfile(QtOpenGL.QGLFormat.CoreProfile)
         fmt.setSampleBuffers(True)
-        super(QtGLWidget_Viewer3, self).__init__(fmt, None)
+        super(QtGLWidget_Viewer3_Texture, self).__init__(fmt, None)
         #
         self.nav = util_moderngl_qt.view_navigation3.ViewNavigation3()
         self.resize(640, 480)
         self.setWindowTitle('Mesh Viewer')
-        self.list_drawer = list_drawer
+        self.drawer = drawer
+        self.img = img
         self.mousePressCallBack = []
         self.mouseMoveCallBack = []
 
     def initializeGL(self):
         self.ctx = moderngl.create_context()
-        self.ctx.enable(moderngl.DEPTH_TEST)
-        for drawer in self.list_drawer:
-            drawer.init_gl(self.ctx)
+        self.drawer.init_gl(self.ctx)
+        img2 = numpy.flip(self.img, axis=0)  # flip upside down
+        self.texture = self.ctx.texture((img2.shape[0], img2.shape[1]), img2.shape[2], img2.tobytes())
+        del self.img
 
     def paintGL(self):
-        self.ctx.clear(1.0, 0.8, 1.0)
+        self.ctx.clear(0.9, 0.8, 1.0)
+        self.ctx.enable(moderngl.DEPTH_TEST)
         proj = self.nav.projection_matrix()
         modelview = self.nav.modelview_matrix()
         zinv = pyrr.Matrix44(value=(1,0,0,0, 0,1,0,0, 0,0,-1,0, 0,0,0,1),dtype=numpy.float32)
-        for drawer in self.list_drawer:
-            drawer.paint_gl(zinv*proj*modelview)
+        mvp = zinv * proj * modelview
+        self.texture.use(location=0)
+        self.drawer.paint_gl(mvp,0)
 
     def resizeGL(self, width, height):
         width = max(2, width)
         height = max(2, height)
         self.ctx.viewport = (0, 0, width, height)
-        self.nav.win_height = self.height()
-        self.nav.win_width = self.width()
 
     def mousePressEvent(self, event):
         self.nav.update_cursor_position(event.pos().x(), event.pos().y())
