@@ -1,6 +1,6 @@
 from pyrr import Matrix44
-import numpy
 import moderngl
+
 
 class DrawerTransformMulti:
 
@@ -14,4 +14,3 @@ class DrawerTransformMulti:
     def paint_gl(self, mvp: Matrix44):
         for transform in self.list_transform:
             self.drawer.paint_gl(mvp * transform)
-

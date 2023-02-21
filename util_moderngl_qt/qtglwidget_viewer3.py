@@ -30,6 +30,7 @@ class QtGLWidget_Viewer3(QtOpenGL.QGLWidget):
 
     def paintGL(self):
         self.ctx.clear(1.0, 0.8, 1.0)
+        self.ctx.polygon_offset = 1.1, 4.0
         proj = self.nav.projection_matrix()
         modelview = self.nav.modelview_matrix()
         zinv = pyrr.Matrix44(value=(1,0,0,0, 0,1,0,0, 0,0,-1,0, 0,0,0,1),dtype=numpy.float32)

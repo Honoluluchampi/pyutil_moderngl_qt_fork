@@ -3,13 +3,19 @@ from pyrr import Matrix44
 import numpy
 import moderngl
 
+
 class ElementInfo:
 
-    def __init__(self, index, mode, color):
+    def __init__(self, index: numpy.ndarray, mode, color):
         self.vao = None
-        self.index = index
+        # index should be numpy.uint32
+        if index.dtype == numpy.uint32:
+            self.index = index
+        else:
+            self.index = index.astype(numpy.uint32)
         self.mode = mode
         self.color = color
+
 
 class DrawerMesPosTex:
 
@@ -17,8 +23,16 @@ class DrawerMesPosTex:
                  list_elem2vtx: typing.List[ElementInfo],
                  vtx2xyz: numpy.ndarray,
                  vtx2uv: numpy.ndarray):
-        self.vtx2xyz = vtx2xyz
-        self.vtx2uv = vtx2uv
+        # coordinate
+        if vtx2xyz.dtype == numpy.float32:
+            self.vtx2xyz = vtx2xyz
+        else:
+            self.vtx2xyz = vtx2xyz.astype(numpy.float32)
+        # uv coordinate
+        if vtx2uv.dtype == numpy.float32:
+            self.vtx2uv = vtx2uv
+        else:
+            self.vtx2uv = vtx2uv.astype(numpy.float32)
         self.list_elem2vtx = list_elem2vtx
         self.vao_content = None
 

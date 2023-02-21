@@ -5,17 +5,24 @@ import moderngl
 
 class ElementInfo:
 
-    def __init__(self, index, mode, color):
+    def __init__(self, index: numpy.ndarray, mode, color: tuple):
         self.vao = None
-        self.index = index
+        # index should be numpy.uint32
+        if index.dtype == numpy.uint32:
+            self.index = index
+        else:
+            self.index = index.astype(numpy.uint32)
         self.mode = mode
         self.color = color
 
 class DrawerMesPos:
 
-    def __init__(self, V:numpy.ndarray, element: typing.List[ElementInfo]):
-        self.V = V
-        self.element = element
+    def __init__(self, vtx2xyz:numpy.ndarray, list_elem2vtx: typing.List[ElementInfo]):
+        if vtx2xyz.dtype == numpy.float32:
+            self.vtx2xyz = vtx2xyz
+        else:
+            self.vtx2xyz = vtx2xyz.astype(numpy.float32)
+        self.list_elem2vtx = list_elem2vtx
         self.vao_content = None
 
     def init_gl(self, ctx: moderngl.Context):
@@ -41,10 +48,10 @@ class DrawerMesPos:
         self.uniform_color = self.prog['color']
 
         self.vao_content = [
-            (ctx.buffer(self.V.tobytes()), '3f', 'in_position'),
+            (ctx.buffer(self.vtx2xyz.tobytes()), '3f', 'in_position'),
         ]
-        del self.V
-        for el in self.element:
+        del self.vtx2xyz
+        for el in self.list_elem2vtx:
             index_buffer = ctx.buffer(el.index.tobytes())
             el.vao = ctx.vertex_array(
                 self.prog, self.vao_content, index_buffer, 4
@@ -58,6 +65,6 @@ class DrawerMesPos:
 
     def paint_gl(self, mvp: Matrix44):
         self.uniform_mvp.value = tuple(mvp.flatten())
-        for el in self.element:
+        for el in self.list_elem2vtx:
             self.uniform_color.value = el.color
             el.vao.render(mode=el.mode)
