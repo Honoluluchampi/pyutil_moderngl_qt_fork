@@ -20,6 +20,7 @@ class QtGLWidget_Viewer3_Texture(QtOpenGL.QGLWidget):
         self.resize(640, 480)
         self.setWindowTitle('Mesh Viewer')
         self.drawer = drawer
+        assert len(img.shape) == 3
         self.img = img
         self.mousePressCallBack = []
         self.mouseMoveCallBack = []
@@ -28,7 +29,9 @@ class QtGLWidget_Viewer3_Texture(QtOpenGL.QGLWidget):
         self.ctx = moderngl.create_context()
         self.drawer.init_gl(self.ctx)
         img2 = numpy.flip(self.img, axis=0)  # flip upside down
-        self.texture = self.ctx.texture((img2.shape[0], img2.shape[1]), img2.shape[2], img2.tobytes())
+        self.texture = self.ctx.texture(
+            (img2.shape[1], img2.shape[0]),  # (W, H)
+            img2.shape[2], img2.tobytes())
         del self.img
 
     def paintGL(self):
@@ -63,9 +66,11 @@ class QtGLWidget_Viewer3_Texture(QtOpenGL.QGLWidget):
             if event.modifiers() & QtCore.Qt.KeyboardModifier.ShiftModifier:
                 self.nav.camera_translation()
                 self.update()
+                return
             if event.modifiers() & QtCore.Qt.KeyboardModifier.AltModifier:
                 self.nav.camera_rotation()
                 self.update()
+                return
         for cb in self.mouseMoveCallBack:
             cb(event)
 

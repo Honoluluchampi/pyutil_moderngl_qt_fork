@@ -5,6 +5,7 @@ import numpy
 from PyQt5 import QtOpenGL, QtGui, QtCore
 import util_moderngl_qt.view_navigation3
 
+
 class QtGLWidget_Viewer3(QtOpenGL.QGLWidget):
 
     def __init__(self, list_drawer=[], parent=None):
@@ -21,6 +22,7 @@ class QtGLWidget_Viewer3(QtOpenGL.QGLWidget):
         self.list_drawer = list_drawer
         self.mousePressCallBack = []
         self.mouseMoveCallBack = []
+        self.mouseDoubleClickCallBack = []
 
     def initializeGL(self):
         self.ctx = moderngl.create_context()
@@ -33,9 +35,9 @@ class QtGLWidget_Viewer3(QtOpenGL.QGLWidget):
         self.ctx.polygon_offset = 1.1, 4.0
         proj = self.nav.projection_matrix()
         modelview = self.nav.modelview_matrix()
-        zinv = pyrr.Matrix44(value=(1,0,0,0, 0,1,0,0, 0,0,-1,0, 0,0,0,1),dtype=numpy.float32)
+        zinv = pyrr.Matrix44(value=(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1), dtype=numpy.float32)
         for drawer in self.list_drawer:
-            drawer.paint_gl(zinv*proj*modelview)
+            drawer.paint_gl(zinv * proj * modelview)
 
     def resizeGL(self, width, height):
         width = max(2, width)
@@ -49,6 +51,13 @@ class QtGLWidget_Viewer3(QtOpenGL.QGLWidget):
         if event.buttons() & QtCore.Qt.LeftButton:
             self.nav.btn_left = True
         for cb in self.mousePressCallBack:
+            cb(event)
+
+    def mouseDoubleClickEvent(self, event: QtGui.QMouseEvent) -> None:
+        self.nav.update_cursor_position(event.pos().x(), event.pos().y())
+        if event.buttons() & QtCore.Qt.LeftButton:
+            self.nav.btn_left = True
+        for cb in self.mouseDoubleClickCallBack:
             cb(event)
 
     def mouseReleaseEvent(self, event):
