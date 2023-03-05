@@ -8,7 +8,7 @@ import util_moderngl_qt.qtglwidget_viewer3
 
 class QtGLWidget_Viewer3_Texture(QtOpenGL.QGLWidget):
 
-    def __init__(self, drawer, img: numpy.ndarray, parent=None):
+    def __init__(self, list_drawer: list, img: numpy.ndarray, parent=None):
         self.parent = parent
         fmt = QtOpenGL.QGLFormat()
         fmt.setVersion(3, 3)
@@ -19,7 +19,7 @@ class QtGLWidget_Viewer3_Texture(QtOpenGL.QGLWidget):
         self.nav = util_moderngl_qt.view_navigation3.ViewNavigation3()
         self.resize(640, 480)
         self.setWindowTitle('Mesh Viewer')
-        self.drawer = drawer
+        self.list_drawer = list_drawer
         assert len(img.shape) == 3
         self.img = img
         self.mousePressCallBack = []
@@ -27,7 +27,8 @@ class QtGLWidget_Viewer3_Texture(QtOpenGL.QGLWidget):
 
     def initializeGL(self):
         self.ctx = moderngl.create_context()
-        self.drawer.init_gl(self.ctx)
+        for drawer in self.list_drawer:
+            drawer.init_gl(self.ctx)
         img2 = numpy.flip(self.img, axis=0)  # flip upside down
         self.texture = self.ctx.texture(
             (img2.shape[1], img2.shape[0]),  # (W, H)
@@ -42,7 +43,11 @@ class QtGLWidget_Viewer3_Texture(QtOpenGL.QGLWidget):
         zinv = pyrr.Matrix44(value=(1,0,0,0, 0,1,0,0, 0,0,-1,0, 0,0,0,1),dtype=numpy.float32)
         mvp = zinv * proj * modelview
         self.texture.use(location=0)
-        self.drawer.paint_gl(mvp,0)
+        for drawer in self.list_drawer:
+            if hasattr(drawer, 'paint_gl_texture'):
+                drawer.paint_gl_texture(mvp,texture_location=0)
+            elif hasattr(drawer, 'paint_gl'):
+                drawer.paint_gl(mvp)
 
     def resizeGL(self, width, height):
         width = max(2, width)

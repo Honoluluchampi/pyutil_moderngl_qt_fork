@@ -85,11 +85,13 @@ class DrawerMesPosTex:
             del el.index
 
     def update_position(self, vtx2xyz: numpy.ndarray):
+        if vtx2xyz.dtype != numpy.float32:
+            vtx2xyz = vtx2xyz.astype(numpy.float32)
         if self.vao_content != None:
             vbo = self.vao_content[0][0]
             vbo.write(vtx2xyz.tobytes())
 
-    def paint_gl(self, mvp: Matrix44, texture_location: int):
+    def paint_gl_texture(self, mvp: Matrix44, texture_location: int):
         self.uniform_mvp.value = tuple(mvp.flatten())
         self.uniform_texture_location.value = texture_location
         for el in self.list_elem2vtx:
