@@ -6,6 +6,7 @@ from PyQt5 import QtOpenGL, QtWidgets, QtCore, QtGui
 
 import util_moderngl_qt.qtglwidget_viewer3
 
+
 class QtGLWidget_Viewer3_Texture(QtOpenGL.QGLWidget):
 
     def __init__(self, list_drawer: list, img: numpy.ndarray, parent=None):
@@ -24,6 +25,7 @@ class QtGLWidget_Viewer3_Texture(QtOpenGL.QGLWidget):
         self.img = img
         self.mousePressCallBack = []
         self.mouseMoveCallBack = []
+        self.mouseDoubleClickCallBack = []
 
     def initializeGL(self):
         self.ctx = moderngl.create_context()
@@ -40,12 +42,12 @@ class QtGLWidget_Viewer3_Texture(QtOpenGL.QGLWidget):
         self.ctx.enable(moderngl.DEPTH_TEST)
         proj = self.nav.projection_matrix()
         modelview = self.nav.modelview_matrix()
-        zinv = pyrr.Matrix44(value=(1,0,0,0, 0,1,0,0, 0,0,-1,0, 0,0,0,1),dtype=numpy.float32)
+        zinv = pyrr.Matrix44(value=(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1), dtype=numpy.float32)
         mvp = zinv * proj * modelview
         self.texture.use(location=0)
         for drawer in self.list_drawer:
             if hasattr(drawer, 'paint_gl_texture'):
-                drawer.paint_gl_texture(mvp,texture_location=0)
+                drawer.paint_gl_texture(mvp, texture_location=0)
             elif hasattr(drawer, 'paint_gl'):
                 drawer.paint_gl(mvp)
 
@@ -59,6 +61,13 @@ class QtGLWidget_Viewer3_Texture(QtOpenGL.QGLWidget):
         if event.buttons() & QtCore.Qt.LeftButton:
             self.nav.btn_left = True
         for cb in self.mousePressCallBack:
+            cb(event)
+
+    def mouseDoubleClickEvent(self, event: QtGui.QMouseEvent) -> None:
+        self.nav.update_cursor_position(event.pos().x(), event.pos().y())
+        if event.buttons() & QtCore.Qt.LeftButton:
+            self.nav.btn_left = True
+        for cb in self.mouseDoubleClickCallBack:
             cb(event)
 
     def mouseReleaseEvent(self, event):
