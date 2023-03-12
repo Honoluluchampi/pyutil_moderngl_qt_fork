@@ -3,6 +3,7 @@ from pyrr import Matrix44
 import numpy
 import moderngl
 
+
 class ElementInfo:
 
     def __init__(self, index: numpy.ndarray, mode, color: tuple):
@@ -15,9 +16,10 @@ class ElementInfo:
         self.mode = mode
         self.color = color
 
+
 class DrawerMesPos:
 
-    def __init__(self, vtx2xyz:numpy.ndarray, list_elem2vtx: typing.List[ElementInfo]):
+    def __init__(self, vtx2xyz: numpy.ndarray, list_elem2vtx: typing.List[ElementInfo]):
         if vtx2xyz.dtype == numpy.float32:
             self.vtx2xyz = vtx2xyz
         else:

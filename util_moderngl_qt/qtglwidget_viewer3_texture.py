@@ -55,6 +55,8 @@ class QtGLWidget_Viewer3_Texture(QtOpenGL.QGLWidget):
         width = max(2, width)
         height = max(2, height)
         self.ctx.viewport = (0, 0, width, height)
+        self.nav.win_height = self.height()
+        self.nav.win_width = self.width()
 
     def mousePressEvent(self, event):
         self.nav.update_cursor_position(event.pos().x(), event.pos().y())
