@@ -21,6 +21,7 @@ class QtGLWidget_Viewer3(QtOpenGL.QGLWidget):
         self.setWindowTitle('Mesh Viewer')
         self.list_drawer = list_drawer
         self.mousePressCallBack = []
+        self.mouseReleaseCallBack = []
         self.mouseMoveCallBack = []
         self.mouseDoubleClickCallBack = []
 
@@ -63,6 +64,8 @@ class QtGLWidget_Viewer3(QtOpenGL.QGLWidget):
     def mouseReleaseEvent(self, event):
         if event.buttons() & QtCore.Qt.LeftButton:
             self.nav.btn_left = False
+        for cb in self.mouseReleaseCallBack:
+            cb(event)
 
     def mouseMoveEvent(self, event):
         self.nav.update_cursor_position(event.pos().x(), event.pos().y())

@@ -7,6 +7,6 @@ def _requires_from_file(filename):
 
 setup(
     name="util_moderngl_qt",
-    version="0.1.13",
+    version="0.1.14",
     install_requires=_requires_from_file('requirements.txt')
 )
