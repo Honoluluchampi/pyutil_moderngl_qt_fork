@@ -6,7 +6,7 @@ import moderngl
 
 class ElementInfo:
 
-    def __init__(self, index: numpy.ndarray, mode, color: tuple):
+    def __init__(self, index: numpy.ndarray, mode, color: typing.Optional[tuple]):
         self.vao = None
         # index should be numpy.uint32
         if index.dtype == numpy.uint32:
@@ -24,6 +24,8 @@ class Drawer:
                  list_elem2vtx: typing.List[ElementInfo],
                  vtx2val: numpy.ndarray,
                  color_map: numpy.ndarray):
+        assert len(vtx2xyz.shape) == 2
+        assert len(vtx2val.shape) == 1
         if vtx2xyz.dtype == numpy.float32:
             self.vtx2xyz = vtx2xyz
         else:
@@ -92,7 +94,7 @@ class Drawer:
                             + fragment_shader_body
         )
         self.vao_content = [
-            (ctx.buffer(self.vtx2xyz.tobytes()), '3f', 'in_position'),
+            (ctx.buffer(self.vtx2xyz.tobytes()), f'{self.vtx2xyz.shape[1]}f', 'in_position'),
             (ctx.buffer(self.vtx2val.tobytes()), '1f', 'in_value'),
         ]
         del self.vtx2xyz
@@ -107,6 +109,11 @@ class Drawer:
     def update_position(self, V: numpy.ndarray):
         if self.vao_content != None:
             vbo = self.vao_content[0][0]
+            vbo.write(V.tobytes())
+
+    def update_value(self, V: numpy.ndarray):
+        if self.vao_content != None:
+            vbo = self.vao_content[1][0]
             vbo.write(V.tobytes())
 
     def paint_gl(self, mvp: Matrix44):

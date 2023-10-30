@@ -17,9 +17,10 @@ class ElementInfo:
         self.color = color
 
 
-class DrawerMesPos:
+class DrawerMesh:
 
     def __init__(self, vtx2xyz: numpy.ndarray, list_elem2vtx: typing.List[ElementInfo]):
+        assert len(vtx2xyz.shape) == 2
         if vtx2xyz.dtype == numpy.float32:
             self.vtx2xyz = vtx2xyz
         else:
@@ -46,11 +47,9 @@ class DrawerMesPos:
                 }
             '''
         )
-        self.uniform_mvp = self.prog['Mvp']
-        self.uniform_color = self.prog['color']
 
         self.vao_content = [
-            (ctx.buffer(self.vtx2xyz.tobytes()), '3f', 'in_position'),
+            (ctx.buffer(self.vtx2xyz.tobytes()), f'{self.vtx2xyz.shape[1]}f', 'in_position'),
         ]
         del self.vtx2xyz
         for el in self.list_elem2vtx:
@@ -66,7 +65,7 @@ class DrawerMesPos:
             vbo.write(V.tobytes())
 
     def paint_gl(self, mvp: Matrix44):
-        self.uniform_mvp.value = tuple(mvp.flatten())
+        self.prog['Mvp'].value = tuple(mvp.flatten())
         for el in self.list_elem2vtx:
-            self.uniform_color.value = el.color
+            self.prog['color'].value = el.color
             el.vao.render(mode=el.mode)
