@@ -4,7 +4,7 @@ import numpy
 import moderngl
 
 
-class DrawerMeshUnindex:
+class Drawer:
 
     def __init__(self, elem2node2xyz: numpy.ndarray):
         if elem2node2xyz.dtype == numpy.float32:

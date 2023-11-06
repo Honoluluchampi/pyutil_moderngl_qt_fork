@@ -17,7 +17,7 @@ class ElementInfo:
         self.color = color
 
 
-class DrawerMeshNormal:
+class Drawer:
 
     def __init__(self,
                  list_elem2vtx: typing.List[ElementInfo],

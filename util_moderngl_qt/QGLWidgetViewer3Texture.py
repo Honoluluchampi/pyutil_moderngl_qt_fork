@@ -4,7 +4,7 @@ import moderngl
 import numpy
 from PyQt5 import QtOpenGL, QtWidgets, QtCore, QtGui
 
-import util_moderngl_qt.qtglwidget_viewer3
+import util_moderngl_qt.QGLWidgetViewer3
 
 
 class QtGLWidget_Viewer3_Texture(QtOpenGL.QGLWidget):

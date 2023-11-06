@@ -17,7 +17,7 @@ class ElementInfo:
         self.color = color
 
 
-class DrawerMesh:
+class Drawer:
 
     def __init__(self, vtx2xyz: numpy.ndarray, list_elem2vtx: typing.List[ElementInfo]):
         assert len(vtx2xyz.shape) == 2

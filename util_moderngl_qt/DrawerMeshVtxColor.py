@@ -1,8 +1,9 @@
 from pyrr import Matrix44
 import numpy
-from moderngl.vertex_array import TRIANGLES
+# from moderngl.VertexArray import TRIANGLES
+import moderngl
 
-class DrawerMesPosColor:
+class Drawer:
 
     def __init__(self, V:bytes, C:bytes, F:bytes):
         self.V = V
@@ -47,4 +48,4 @@ class DrawerMesPosColor:
 
     def paint_gl(self, mvp: Matrix44):
         self.mvp.value = tuple(mvp.flatten())
-        self.vao.render(mode=TRIANGLES)
+        self.vao.render(mode=moderngl.TRIANGLES)
