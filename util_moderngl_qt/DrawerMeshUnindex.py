@@ -1,3 +1,7 @@
+"""
+OpenGL drawer of uniform simplex mesh (triangles and line segments) represented as flat array of coordinates
+"""
+
 import typing
 from pyrr import Matrix44
 import numpy

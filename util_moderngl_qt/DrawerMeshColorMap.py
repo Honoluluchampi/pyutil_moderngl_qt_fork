@@ -1,3 +1,7 @@
+"""
+OpenGL drawer of uniform simplex mesh (triangles and line segments) with scalar attribute using colour map
+"""
+
 import typing
 from pyrr import Matrix44
 import numpy

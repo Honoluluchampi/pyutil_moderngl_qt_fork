@@ -1,6 +1,9 @@
+"""
+OpenGL drawer of uniform simplex mesh (triangles and line segments) with vertex color
+"""
+
 from pyrr import Matrix44
 import numpy
-# from moderngl.VertexArray import TRIANGLES
 import moderngl
 
 class Drawer:

@@ -1,3 +1,7 @@
+"""
+OpenGL drawer of uniform simplex mesh (triangles and line segments)
+"""
+
 import typing
 from pyrr import Matrix44
 import numpy
@@ -60,9 +64,13 @@ class Drawer:
             del el.index
 
     def update_position(self, V: numpy.ndarray):
-        if self.vao_content != None:
+        if V.dtype != numpy.float32:
+            V1 = V.astype(numpy.float32)
+        else:
+            V1 = V
+        if self.vao_content is not None:
             vbo = self.vao_content[0][0]
-            vbo.write(V.tobytes())
+            vbo.write(V1.tobytes())
 
     def paint_gl(self, mvp: Matrix44):
         self.prog['Mvp'].value = tuple(mvp.flatten())
