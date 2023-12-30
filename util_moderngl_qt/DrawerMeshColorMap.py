@@ -3,6 +3,7 @@ OpenGL drawer of uniform simplex mesh (triangles and line segments) with scalar 
 """
 
 import typing
+#
 from pyrr import Matrix44
 import numpy
 import moderngl
@@ -101,14 +102,14 @@ class Drawer:
             (ctx.buffer(self.vtx2xyz.tobytes()), f'{self.vtx2xyz.shape[1]}f', 'in_position'),
             (ctx.buffer(self.vtx2val.tobytes()), '1f', 'in_value'),
         ]
-        del self.vtx2xyz
-        del self.vtx2val
+        #del self.vtx2xyz
+        #del self.vtx2val
         for el in self.list_elem2vtx:
             index_buffer = ctx.buffer(el.index.tobytes())
             el.vao = ctx.vertex_array(
                 self.prog, self.vao_content, index_buffer, 4
             )
-            del el.index
+            #del el.index
 
     def update_position(self, V: numpy.ndarray):
         if self.vao_content != None:

@@ -55,13 +55,13 @@ class Drawer:
         self.vao_content = [
             (ctx.buffer(self.vtx2xyz.tobytes()), f'{self.vtx2xyz.shape[1]}f', 'in_position'),
         ]
-        del self.vtx2xyz
+        #del self.vtx2xyz
         for el in self.list_elem2vtx:
             index_buffer = ctx.buffer(el.index.tobytes())
             el.vao = ctx.vertex_array(
                 self.prog, self.vao_content, index_buffer, 4
             )
-            del el.index
+            #del el.index
 
     def update_position(self, V: numpy.ndarray):
         if V.dtype != numpy.float32:

@@ -19,9 +19,11 @@ class CylinderInfo:
     def __init__(
             self,
             pos0=numpy.array([0., 0., 0.]),
-            pos1=numpy.array([0., 0., 0.])):
+            pos1=numpy.array([0., 0., 0.]),
+            color=None):
         self.pos0 = pos0
         self.pos1 = pos1
+        self.color = color
 
 
 class Drawer:
@@ -50,5 +52,8 @@ class Drawer:
             mt = Matrix44.from_translation(p0)
             ms = Matrix44.from_scale((self.rad, self.rad, numpy.linalg.norm(p0-p1)))
             transform = mt * mr.transpose() * ms
-            self.drawer.list_elem2vtx[0].color = self.color
+            if cylinder.color is None:
+                self.drawer.list_elem2vtx[0].color = self.color
+            else:
+                self.drawer.list_elem2vtx[0].color = cylinder.color
             self.drawer.paint_gl(mvp * transform)

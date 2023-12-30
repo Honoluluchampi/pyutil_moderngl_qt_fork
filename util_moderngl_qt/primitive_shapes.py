@@ -3,8 +3,8 @@ generate triangle meshes for primitive shapes to draw thick lines and fat points
 """
 
 import math
+#
 import numpy
-
 
 def sphere(
         radius: float = 1.,
@@ -78,3 +78,31 @@ def cylinder(
             tri2vtx[i_cnt] = numpy.array([ip0, jp1, jp0])
             i_cnt += 1
     return tri2vtx, vtx2xyz
+
+
+def cube_wireframe():
+    vtx2xyz = [
+        [-1, -1, -1],
+        [-1, -1, +1],
+        [-1, +1, -1],
+        [-1, +1, +1],
+        [+1, -1, -1],
+        [+1, -1, +1],
+        [+1, +1, -1],
+        [+1, +1, +1]]
+    vtx2xyz = numpy.array(vtx2xyz, dtype=numpy.float32)
+    edge2vtx = [
+        [0, 1],
+        [2, 3],
+        [1, 3],
+        [0, 2],
+        [4, 5],
+        [6, 7],
+        [5, 7],
+        [4, 6],
+        [0, 4],
+        [1, 5],
+        [2, 6],
+        [3, 7]]
+    edge2vtx = numpy.array(edge2vtx, dtype=numpy.uint64)
+    return edge2vtx, vtx2xyz

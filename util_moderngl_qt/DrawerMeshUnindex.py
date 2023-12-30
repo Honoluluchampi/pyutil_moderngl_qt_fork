@@ -3,6 +3,7 @@ OpenGL drawer of uniform simplex mesh (triangles and line segments) represented 
 """
 
 import typing
+#
 from pyrr import Matrix44
 import numpy
 import moderngl
@@ -49,8 +50,8 @@ class Drawer:
             (ctx.buffer(self.elem2node2xyz.tobytes()), f'{self.elem2node2xyz.shape[2]}f', 'in_position'),
             (ctx.buffer(self.elem2node2color.tobytes()), '3f', 'in_color')
         ]
-        del self.elem2node2xyz
-        del self.elem2node2color
+        #del self.elem2node2xyz
+        #del self.elem2node2color
         self.vao = ctx.vertex_array(self.prog, self.vao_content)
 
     def update_color(self, V: numpy.ndarray):

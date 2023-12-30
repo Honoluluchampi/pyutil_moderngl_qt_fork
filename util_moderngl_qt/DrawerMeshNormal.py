@@ -75,14 +75,14 @@ class Drawer:
             (ctx.buffer(self.vtx2xyz.tobytes()), '3f', 'in_xyz'),
             (ctx.buffer(self.vtx2nrm.tobytes()), '3f', 'in_nrm')
         ]
-        del self.vtx2xyz
-        del self.vtx2nrm
+        #del self.vtx2xyz
+        #del self.vtx2nrm
         for el in self.list_elem2vtx:
             index_buffer = ctx.buffer(el.index.tobytes())
             el.vao = ctx.vertex_array(
                 self.prog, self.vao_content, index_buffer, 4
             )
-            del el.index
+            #del el.index
 
     def update_position(self, vtx2xyz: numpy.ndarray):
         if vtx2xyz.dtype != numpy.float32:

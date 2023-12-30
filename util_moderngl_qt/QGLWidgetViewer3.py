@@ -1,14 +1,22 @@
 import math
+import typing
+#
 import moderngl
 import pyrr
 import numpy
 from PyQt5 import QtOpenGL, QtGui, QtCore
+#
 import util_moderngl_qt.view_navigation3
 
 
 class QtGLWidget_Viewer3(QtOpenGL.QGLWidget):
 
-    def __init__(self, list_drawer=[], parent=None):
+    def __init__(
+            self,
+            list_drawer:typing.Optional[typing.List] = None,
+            parent=None):
+        if list_drawer is None:
+            list_drawer = []
         self.parent = parent
         fmt = QtOpenGL.QGLFormat()
         fmt.setVersion(3, 3)
