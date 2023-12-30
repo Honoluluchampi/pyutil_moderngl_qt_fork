@@ -7,11 +7,11 @@ class OfflineRenderer:
 
     def __init__(
             self,
-            size: typing.Tuple[int, int]):
+            width_height: typing.Tuple[int, int]):
         self.ctx = moderngl.create_context(standalone=True)
         self.ctx.polygon_offset = 1.1, 4.0
         self.ctx.enable(moderngl.DEPTH_TEST)
-        self.fbo = self.ctx.simple_framebuffer(size)
+        self.fbo = self.ctx.simple_framebuffer(width_height)
 
     def start(self):
         self.fbo.use()
@@ -19,7 +19,7 @@ class OfflineRenderer:
 
     def get_rgb(self):
         rgb = numpy.frombuffer( self.fbo.read(), dtype=numpy.uint8)
-        rgb = rgb.reshape((self.fbo.size[0],self.fbo.size[1],3)).copy()
+        rgb = rgb.reshape((self.fbo.size[1],self.fbo.size[0],3)).copy()
         return rgb
 
     def get_depth(self):
