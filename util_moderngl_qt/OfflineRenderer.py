@@ -3,6 +3,7 @@ import typing
 import moderngl
 import numpy
 
+
 class OfflineRenderer:
 
     def __init__(
@@ -18,8 +19,8 @@ class OfflineRenderer:
         self.fbo.clear(0.0, 0.0, 1.0, 1.0)
 
     def get_rgb(self):
-        rgb = numpy.frombuffer( self.fbo.read(), dtype=numpy.uint8)
-        rgb = rgb.reshape((self.fbo.size[1],self.fbo.size[0],3)).copy()
+        rgb = numpy.frombuffer(self.fbo.read(), dtype=numpy.uint8)
+        rgb = rgb.reshape((self.fbo.size[1], self.fbo.size[0], 3)).copy()
         return rgb
 
     def get_depth(self):

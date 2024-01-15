@@ -15,6 +15,7 @@ class QtGLWidget_Viewer3(QtOpenGL.QGLWidget):
             self,
             list_drawer:typing.Optional[typing.List] = None,
             parent=None):
+        self.ctx = None
         if list_drawer is None:
             list_drawer = []
         self.parent = parent
@@ -32,6 +33,7 @@ class QtGLWidget_Viewer3(QtOpenGL.QGLWidget):
         self.mouseReleaseCallBack = []
         self.mouseMoveCallBack = []
         self.mouseDoubleClickCallBack = []
+        self.viewTransformationChangeCallCack = []
 
     def initializeGL(self):
         self.ctx = moderngl.create_context()
@@ -39,14 +41,19 @@ class QtGLWidget_Viewer3(QtOpenGL.QGLWidget):
         for drawer in self.list_drawer:
             drawer.init_gl(self.ctx)
 
-    def paintGL(self):
-        self.ctx.clear(1.0, 0.8, 1.0)
-        self.ctx.polygon_offset = 1.1, 4.0
+    def view_transformation_matrix_for_gl(self):
         proj = self.nav.projection_matrix()
         modelview = self.nav.modelview_matrix()
         zinv = pyrr.Matrix44(value=(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1), dtype=numpy.float32)
+        return zinv * proj * modelview
+
+    def paintGL(self):
+        self.ctx.fbo.use()
+        self.ctx.clear(1.0, 0.8, 1.0)
+        self.ctx.polygon_offset = 1.1, 4.0
+        mvp = self.view_transformation_matrix_for_gl()
         for drawer in self.list_drawer:
-            drawer.paint_gl(zinv * proj * modelview)
+            drawer.paint_gl(mvp)
 
     def resizeGL(self, width, height):
         width = max(2, width)
@@ -81,9 +88,13 @@ class QtGLWidget_Viewer3(QtOpenGL.QGLWidget):
             if event.modifiers() & QtCore.Qt.KeyboardModifier.ShiftModifier:
                 self.nav.camera_translation()
                 self.update()
+                for cb in self.viewTransformationChangeCallCack:
+                    cb(event)
             if event.modifiers() & QtCore.Qt.KeyboardModifier.AltModifier:
                 self.nav.camera_rotation()
                 self.update()
+                for cb in self.viewTransformationChangeCallCack:
+                    cb(event)
         for cb in self.mouseMoveCallBack:
             cb(event)
 
@@ -91,3 +102,5 @@ class QtGLWidget_Viewer3(QtOpenGL.QGLWidget):
         dy = event.pixelDelta().y()
         self.nav.scale *= math.pow(1.01, dy)
         self.update()
+        for cb in self.viewTransformationChangeCallCack:
+            cb(event)

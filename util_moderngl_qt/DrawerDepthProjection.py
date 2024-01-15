@@ -14,15 +14,22 @@ class Drawer:
         self.uniform_mvp = None
         self.uniform_color = None
         self.mvpinv = mvp.inverse
-        ny = depth.shape[0]
-        nx = depth.shape[1]
+        self.depth = None
+        self.update_depth(depth)
+        self.color = color
+
+    def update_depth(self, depth_image):
+        nx = depth_image.shape[1]
+        ny = depth_image.shape[0]
         self.depth = numpy.ndarray((ny, nx, 3), numpy.float32)
         for ih in range(0, ny):
             self.depth[ih, :, 0] = 2.0 * (numpy.linspace(0, nx - 1, nx) + 0.5) / float(nx) - 1.
             self.depth[ih, :, 1] = 2.0 * (float(ih) + 0.5) / ny - 1.
-        self.depth[:, :, 2] = depth[:, :] * 2. - 1.
+        self.depth[:, :, 2] = depth_image[:, :] * 2. - 1.
         self.depth = self.depth.reshape((-1, 3))
-        self.color = color
+        if self.vao_content is not None:
+            vbo = self.vao_content[0][0]
+            vbo.write(self.depth.tobytes())
 
     def init_gl(self, ctx: moderngl.Context):
         self.prog = ctx.program(
