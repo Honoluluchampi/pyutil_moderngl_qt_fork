@@ -1,4 +1,5 @@
-import math, numpy
+import math
+import numpy
 
 import pyrr
 from pyrr import Quaternion, Vector3, Matrix44
