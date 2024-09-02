@@ -29,6 +29,8 @@ class QtGLWidget_Viewer3(QtOpenGL.QGLWidget):
         self.resize(640, 480)
         self.setWindowTitle('Mesh Viewer')
         self.list_drawer = list_drawer
+        # calls all the registered drawers if active_drawer_ids is empty
+        self.active_drawer_ids = []
         self.mousePressCallBack = []
         self.mouseReleaseCallBack = []
         self.mouseMoveCallBack = []
@@ -52,8 +54,14 @@ class QtGLWidget_Viewer3(QtOpenGL.QGLWidget):
         self.ctx.clear(1.0, 0.8, 1.0)
         self.ctx.polygon_offset = 1.1, 4.0
         mvp = self.view_transformation_matrix_for_gl()
-        for drawer in self.list_drawer:
-            drawer.paint_gl(mvp)
+        # default behavior
+        if len(self.active_drawer_ids) == 0:
+            for drawer in self.list_drawer:
+                drawer.paint_gl(mvp)
+        # specified ids
+        else:
+            for id in self.active_drawer_ids:
+                self.list_drawer[id].paint_gl(mvp)
 
     def resizeGL(self, width, height):
         width = max(2, width)
@@ -104,3 +112,6 @@ class QtGLWidget_Viewer3(QtOpenGL.QGLWidget):
         self.update()
         for cb in self.viewTransformationChangeCallCack:
             cb(event)
+
+    def update_active_drawer_ids(self, ids):
+        self.active_drawer_ids = ids
